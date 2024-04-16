@@ -1,0 +1,8 @@
+{{ if isTrue .Env.LOGGING }}
+[global]
+save-folder=/backup/ofelia
+{{ end }}
+
+[job-local "backup"]
+schedule={{ .Env.SCHEDULE }}
+command=/home/backup/backup.sh

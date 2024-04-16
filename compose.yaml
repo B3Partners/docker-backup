@@ -1,0 +1,33 @@
+# Merge this with a Docker Compose configuration to add it to a stack, for example
+# by adding it to COMPOSE_FILE in an env-file.
+
+volumes:
+  backup:
+
+services:
+  backup:
+    image: ghcr.io/b3partners/backup:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-backup
+    restart: unless-stopped
+    build:
+      context: .
+    volumes:
+      - backup:/backup
+    environment:
+      - "SCHEDULE"
+      - "LOGGING"
+      - "BACKUP_PG"
+      - "BACKUP_DIR"
+      - "PGHOST=${PGHOST:-db}"
+      - "PGDATABASE"
+      - "PGUSER=${PGUSER:-postgres}"
+      - "PGPASSWORD=${PGPASSWORD:-postgres}"
+      - "STORAGE_BOX"
+      - "SFTP_HOST"
+      - "SFTP_USER"
+      - "SFTP_PATH=${SFTP_PATH:-.}"
+      - "SSHPASS"
+      - "PG_COMPRESS"
+      - "TAR_COMPRESS"
+      - "ZSTD_NBTHREADS"
+      - "XZ_DEFAULTS"
