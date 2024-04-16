@@ -1,0 +1,8 @@
+# Merge this additional Compose file to an existing Docker Compose stack by adding it to the COMPOSE_FILE environment
+# variable and run `docker compose up backup` to immediately make a backup for testing instead of on a schedule.
+
+services:
+  backup:
+    restart: no
+    environment:
+      - ONESHOT=true
