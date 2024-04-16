@@ -6,6 +6,9 @@ ARG DOCKERIZE_VERSION=v0.7.0
 ARG POSTGRES_CLIENT_VERSION=15
 
 LABEL authors="matthijsln"
+LABEL org.opencontainers.image.source=https://github.com/B3Partners/docker-backup
+LABEL org.opencontainers.image.description="Docker image to backup PostgreSQL databases and directories"
+LABEL org.opencontainers.image.licenses=MIT
 
 ENV TZ="Europe/Amsterdam"
 
