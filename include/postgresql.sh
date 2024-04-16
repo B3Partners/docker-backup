@@ -47,11 +47,17 @@ backup_postgres_databases() {
   # Do not leave dumps from deleted databases (locally, will still remain at SFTP server)
   rm -f $DIR_BACKUP/*.sql.*
 
-  pg_dumpall --globals-only > $DIR_BACKUP/postgres_globals.sql
+  PG_SUPERUSER=$(psql -tA -c "select rolsuper from pg_roles where rolname = current_user")
+  if [[ "$PG_SUPERUSER" == "t" ]]; then
+    pg_dumpall --globals-only > $DIR_BACKUP/postgres_globals.sql
+  fi
 
   if [[ "$PGDATABASE" != "all" ]]; then
     backup_postgres_database
   else
+    if [[ "$PG_SUPERUSER" != "t" ]]; then
+      print_msg WARN "PostgreSQL account specified is not superuser. Backing up all databases may not work and globals (user accounts) are not backed up."
+    fi
     DBS=$(psql -tA -c "select datname from pg_database where not datistemplate and datname <> 'postgres'")
     print_msg "Backing up all following databases: $(echo $DBS | sed 's/ /, /g' )"
     for PGDATABASE in $DBS; do
