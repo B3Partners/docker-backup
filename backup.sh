@@ -26,6 +26,8 @@ export XZ_DEFAULTS="-T 0"
 
 DIR_BACKUP=/backup/temp
 DIR_UPLOADED=/backup/uploaded
+mkdir $DIR_BACKUP 2>/dev/null
+mkdir $DIR_UPLOADED 2>/dev/null
 
 echo
 EXITCODE=0
