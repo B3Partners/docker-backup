@@ -31,7 +31,7 @@ backup_postgres_databases() {
   POSTGRES_CLIENT_VERSION=$(dpkg -l | awk '/^ii.*postgresql-client/ {if ($2 ~ /^postgresql-client-[0-9]/) print $2}' | cut -d'-' -f3)
 
   # Extract PostgreSQL server version from the remote server
-  POSTGRES_SERVER_VERSION=$(psql -tA -c "SELECT current_setting('server_version_num')::integer / 10000;")
+  POSTGRES_SERVER_VERSION=$(psql -tA -d postgres -c "select current_setting('server_version_num')::integer / 10000;")
   if [[ $? -ne 0 ]]; then
       print_error_and_exit "Error testing the PostgreSQL connection; please check the PG* environment variables."
   fi
@@ -47,7 +47,7 @@ backup_postgres_databases() {
   # Do not leave dumps from deleted databases (locally, will still remain at SFTP server)
   rm -f $DIR_BACKUP/*.sql.*
 
-  PG_SUPERUSER=$(psql -tA -c "select rolsuper from pg_roles where rolname = current_user")
+  PG_SUPERUSER=$(psql -tA -d postgres -c "select rolsuper from pg_roles where rolname = current_user")
   if [[ "$PG_SUPERUSER" == "t" ]]; then
     pg_dumpall --globals-only > $DIR_BACKUP/postgres_globals.sql
   fi
@@ -58,7 +58,7 @@ backup_postgres_databases() {
     if [[ "$PG_SUPERUSER" != "t" ]]; then
       print_msg WARN "PostgreSQL account specified is not superuser. Backing up all databases may not work and globals (user accounts) are not backed up."
     fi
-    DBS=$(psql -tA -c "select datname from pg_database where not datistemplate and datname <> 'postgres'")
+    DBS=$(psql -tA -d postgres -c "select datname from pg_database where not datistemplate and datname <> 'postgres'")
     print_msg "Backing up all following databases: $(echo $DBS | sed 's/ /, /g' )"
     for PGDATABASE in $DBS; do
       backup_postgres_database
@@ -67,7 +67,7 @@ backup_postgres_databases() {
 }
 
 backup_postgres_database() {
-  res=$(psql -tA -c "select pg_size_pretty(pg_database_size('$PGDATABASE'));")
+  res=$(psql -tA -d postgres -c "select pg_size_pretty(pg_database_size('$PGDATABASE'));")
   if [[ $? -ne 0 ]]; then
       print_error "Can't get database size for database to backup \"$PGDATABASE\"!"
   else
