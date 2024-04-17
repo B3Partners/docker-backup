@@ -1,5 +1,5 @@
-# Merge this with a Docker Compose configuration to add it to a stack, for example
-# by adding it to COMPOSE_FILE in an env-file.
+# Add this to your Docker Compose configuration, or merge it by referencing this file in the COMPOSE_FILE environment
+# variable in an env-file.
 
 volumes:
   backup:
@@ -9,16 +9,15 @@ services:
     image: ghcr.io/b3partners/backup:latest
     container_name: ${COMPOSE_PROJECT_NAME}-backup
     restart: unless-stopped
-    build:
-      context: .
     volumes:
-      - backup:/backup
+      - ${BACKUP_VOLUME_SOURCE:-backup}:/backup
     environment:
       - "SCHEDULE"
       - "LOGGING"
       - "BACKUP_PG"
       - "BACKUP_DIR"
       - "PGHOST=${PGHOST:-db}"
+      - "PGPORT"
       - "PGDATABASE"
       - "PGUSER=${PGUSER:-postgres}"
       - "PGPASSWORD=${PGPASSWORD:-postgres}"
