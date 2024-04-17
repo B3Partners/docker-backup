@@ -163,6 +163,8 @@ services:
 
 # Todo
 
+- [ ] When only a single file is to be uploaded, the destination directory must exist otherwise the backup file will be
+      named as the destination (scp limitation)
 - [ ] Add option to asymmetrically encrypt the backup (using gpg for example)
 - [ ] Include file hashes in output
 - [ ] Push backup metrics to Prometheus (which databases, success/fail, full and compressed size, duration, upload 
