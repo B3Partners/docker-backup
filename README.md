@@ -11,7 +11,7 @@ This container can back up a PostgreSQL server.
 - The backup is a SQL dump made using `pg_dump`
 - The container uses a Debian base image and uses `pg_dump` with the same major version as the server by installing the
   correct postgresql-client package
-- Directories with files can also be backed up
+- Directories with files can also be backed up as a tarball (not suitable for large files which don't change often)
 
 Mainly based on [borgbackup-docker](https://github.com/azlux/borgbackup-docker), but uses [Ofelia](https://github.com/mcuadros/ofelia)
 for scheduling instead of cron and [dockerize](https://github.com/jwilder/dockerize).
