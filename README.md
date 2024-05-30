@@ -112,6 +112,10 @@ skipped. Also when uploading the backup using SFTP goes wrong, the backups will 
 the container. The Ofelia logs will also be written to `/backup/ofelia` so they remain persistent even when re-creating
 the container.
 
+## Encryption
+The backups can be encrypted with [GPG](https://www.gnupg.org/). To use this feature, you need to provide a GPG key 
+The GPG keys are used to encrypt and decrypt the backup files. You need to provide a "Public key file in .asc format" and place it in the keyfile folder. Make sure you name the file `public-key.asc`. Also make sure you rebuil the image with the new key. The private key is not. You need the private key to decrypt the backups. __make sure you keep the private key in a safe place. If you loose the private key that accompanies the public key, you will not be able to decrypt the backups!__ 
+
 ## Configuration
 
 This container is configured using the following environment variables:
@@ -138,6 +142,7 @@ This container is configured using the following environment variables:
 | `ZSTD_CLEVEL`    | `3`         | Zstd compression level (1-19)                                                                                                                 |
 | `ZSTD_NBTHREADS` | `0`         | Number of CPU cores for Zstd compression, default 0 means all cores                                                                           |
 | `XZ_DEFAULTS`    | `-T 0`      | Options voor `xz` compression: use all cores by default                                                                                       | 
+| `ENCRYPT    `    | `true`      | Option for encryption with gpg. copy your own public key in the folder keyfile or paste it in the template and rebuild the image: default is `true`                                                                                       | 
 
 The default `zstd` compression is the fastest and most efficient, and makes sure the backup job is not bottlenecked by 
 the compression as is the case with other compression tools (even the parallel versions).
@@ -169,7 +174,7 @@ services:
 
 # Todos
 
-- [ ] Add option to asymmetrically encrypt the backup (using gpg for example)
+- [x] Add option to asymmetrically encrypt the backup (using gpg for example)
 - [ ] Include file hashes in output
 - [ ] Push backup metrics to Prometheus (which databases, success/fail, full and compressed size, duration, upload 
       stats) for alerts and dashboard in Grafana or similar

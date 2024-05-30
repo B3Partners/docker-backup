@@ -3,7 +3,7 @@
 source ./include/msg.sh
 source ./include/utils.sh
 source ./include/postgresql.sh
-
+source ./include/encrypt.sh
 # Defaults
 
 [[ "$1" == "--startup" ]] && STARTUP=1
@@ -11,7 +11,9 @@ source ./include/postgresql.sh
 BACKUP_PG=${BACKUP_PG:-true}
 PGHOST=${PGHOST:-db}
 PGDATABASE=${PGDATABASE:-all}
-
+ENCRYPT=${ENCRYPT:-true}
+KEYFILE=${KEYFILE:-"/home/backup/include/public-key.asc"}
+SFTP=true
 SFTP_PATH=${SFTP_PATH:-backup}
 if [[ -n "$STORAGE_BOX" ]]; then
   SFTP_HOST=${STORAGE_BOX}.your-storagebox.de
@@ -34,9 +36,14 @@ EXITCODE=0
 
 backup_directory
 backup_postgres_databases
+encrypt_files
 
 if [[ ! $STARTUP ]]; then
-  upload_backup
+  if [ "$ENCRYPT" = "true" ]; then
+    upload_encrypted_backup
+  else
+    upload_backup
+  fi
 fi
 
 exit $EXITCODE
