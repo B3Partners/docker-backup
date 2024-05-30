@@ -8,7 +8,7 @@ encrypt_files() {
     encrypt_dir=${DIR_BACKUP}
     success=true  # assume success initially
 
-    start_time=$(date +"%s")*1000   # record the current time in seconds since epoch
+    start_time=$(date +"%s")   # record the current time in seconds since epoch
 
     for file in "${encrypt_dir}"/*; do
         print_msg "encrypting file: ${file} "
@@ -19,14 +19,11 @@ encrypt_files() {
         fi
     done
 
-    end_time=$(date +"%s")*1000  # record the current time in seconds since epoch after encryption is complete
+    end_time=$(date +"%s")  # record the current time in seconds since epoch after encryption is complete
 
     if $success; then
         elapsed_time=$((end_time - start_time))  # calculate the difference between the two times
-        minutes=$((elapsed_time / 60))
-        seconds=$((elapsed_time % 60))
-        miliseconds=$((elapsed_time % 1 * 1000))
-        print_msg "Encryption succeeded and took ${minutes} minutes ${seconds} seconds and ${miliseconds} milliseconds"
+        print_msg "Encryption succeeded and took ${elapsed_time} seconds"
     else
         print_error "Encryption failed."
     fi
