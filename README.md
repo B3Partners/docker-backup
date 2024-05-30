@@ -114,7 +114,7 @@ the container.
 
 ## Encryption
 The backups can be encrypted with [GPG](https://www.gnupg.org/). To use this feature, you need to provide a GPG key 
-The GPG keys are used to encrypt and decrypt the backup files. You need to provide a "Public key file in .asc format" and place it in the keyfile folder. Make sure you name the file `public-key.asc`. Also make sure you rebuil the image with the new key. The private key is not. You need the private key to decrypt the backups. __make sure you keep the private key in a safe place. If you loose the private key that accompanies the public key, you will not be able to decrypt the backups!__ 
+The GPG keys are used to encrypt and decrypt the backup files. You need to provide a "Public key file in .asc format" and place it in the keyfile folder. Make sure you name the file `public-key.asc`. Also make sure you rebuild the image with the new key. The private key is not. You need the private key to decrypt the backups. __make sure you keep the private key in a safe place. If you loose the private key that accompanies the public key, you will not be able to decrypt the backups!__ 
 
 ## Configuration
 
