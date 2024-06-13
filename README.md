@@ -180,8 +180,6 @@ services:
 
 # Gotchas
 
-- When only a single file is to be uploaded, the destination directory must exist otherwise the backup file will be
-  named as the destination (scp limitation)
 - Backups of removed databases remain on the remote SFTP server (not locally). Not fixable using scp only.
 
 # Todos
