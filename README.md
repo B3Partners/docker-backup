@@ -113,77 +113,51 @@ the container. The Ofelia logs will also be written to `/backup/ofelia` so they 
 the container.
 
 ## Encryption
-The backups can be encrypted with [GPG](https://www.gnupg.org/). To use this feature, you need to provide a GPG key 
-The GPG keys are used to encrypt and decrypt the backup files. 
-> Due to the fact that the encryption requires the public key, it is mandatory to use the key when encryption is enabled. If no key is provided and encryption is enabled the back-up will fail.
+
+The backups can be encrypted with [GPG](https://www.gnupg.org/). To enable, set `ENCRYPT=true` and provide the a public
+key in the `PUBLIC_KEY` variable, on a single line without header and footer to make it easier to specify. 
+
+Use the following command to export a GPG key in a single line: 
+
+```shell
+gpg --armor --export [key-name] | tail -n +3 | head -n -1 | tr -d "[:space:]"
+```
+
+> __Important__: if you first make a backup without encryption, have it copied to a SFTP server and then enable 
+encryption, make sure you delete the unencrypted files (without .gpg extension) of the previous backups from your SFTP 
+> server.
 
 ## Configuration
 
 This container is configured using the following environment variables:
 
-| Variable         | Default     | Description                                                                                                                                                          |
-|------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ONESHOT`        | `false`     | Set to `true` to backup up a single time and exit without starting the scheduler                                                                                     |
-| `SCHEDULE`       | `@midnight` | Schedule for the backup job, see [here](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc#hdr-CRON_Expression_Format) for the format                        |
-| `LOGGING`        | `true`      | Whether Ofelia should write logs for each job in the container to `/backup/ofelia`                                                                                   |
-| `BACKUP_DIR`     | -           | Directory to back up (optional)                                                                                                                                      |
-| `BACKUP_PG`      | `true`      | Set to `false` to only backup directories and no PostgreSQL databases                                                                                                |
-| `PGHOST`         | `db`        | PostgreSQL database hostname. When using Docker Compose specify the service name.                                                                                    |
-| `PGPORT`         | `5432`      | PostgreSQL port                                                                                                                                                      |
-| `PGUSER`         | `postgres`  | PostgreSQL username                                                                                                                                                  |
-| `PGPASSWORD`     | `postgres`  | PostgreSQL password                                                                                                                                                  |
-| `PGDATABASE`     | `all`       | Database(s) to back up, separated by `,` or `all` to back up all databases in separate SQL dumps                                                                     |
-| `STORAGE_BOX`    | -           | Optional: Hetzner Storage Box account name (if set, no need to set SFTP_HOST and SFTP_USER)                                                                          | 
-| `SFTP_HOST`      | -           | Optional SFTP server hostname                                                                                                                                        |
-| `SFTP_USER`      | -           |                                                                                                                                                                      |
-| `SFTP_PATH`      | `backup`    | Remote path on the SFTP server where to put backup files                                                                                                             |
-| `SSHPASS`        | -           | SFTP account password                                                                                                                                                |
-| `PG_COMPRESS`    | `zstd`      | Compression program for PostgreSQL dump, available: `zstd`, `pigz` (parallel gzip), `pbzip2` (parallel bzip2), `xz`                                                  |
-| `TAR_COMPRESS`   | `zstd`      | Compression program for TAR-ed directory                                                                                                                             |
-| `ZSTD_CLEVEL`    | `3`         | Zstd compression level (1-19)                                                                                                                                        |
-| `ZSTD_NBTHREADS` | `0`         | Number of CPU cores for Zstd compression, default 0 means all cores                                                                                                  |
-| `XZ_DEFAULTS`    | `-T 0`      | Options voor `xz` compression: use all cores by default                                                                                                              | 
-| `ENCRYPT`        | `false`      | Option for encryption with default is `false` if enabled the _mandatory_ `PUBLIC_KEY` variable must be populated in the compose file. You can paste your __public__ key in there. | 
-| `PUBLIC_KEY`     | -           | This variable can be set in both the compose file or in an .env file (recommended). It requires that you paste the contents of a public key file (.asc) as a __single line__ without the `--- BEGIN BLOCK ---` and `---END PGP BLOCK ---` __This is mandatory if encryption is enabled__. Without a working public key the encryption will fail and the backups will not be stored.        | 
+| Variable         | Default     | Description                                                                                                                                   |
+|------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `ONESHOT`        | `false`     | Set to `true` to backup up a single time and exit without starting the scheduler                                                              |
+| `SCHEDULE`       | `@midnight` | Schedule for the backup job, see [here](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc#hdr-CRON_Expression_Format) for the format |
+| `LOGGING`        | `true`      | Whether Ofelia should write logs for each job in the container to `/backup/ofelia`                                                            |
+| `BACKUP_DIR`     | -           | Directory to back up (optional)                                                                                                               |
+| `BACKUP_PG`      | `true`      | Set to `false` to only backup directories and no PostgreSQL databases                                                                         |
+| `PGHOST`         | `db`        | PostgreSQL database hostname. When using Docker Compose specify the service name.                                                             |
+| `PGPORT`         | `5432`      | PostgreSQL port                                                                                                                               |
+| `PGUSER`         | `postgres`  | PostgreSQL username                                                                                                                           |
+| `PGPASSWORD`     | `postgres`  | PostgreSQL password                                                                                                                           |
+| `PGDATABASE`     | `all`       | Database(s) to back up, separated by `,` or `all` to back up all databases in separate SQL dumps                                              |
+| `STORAGE_BOX`    | -           | Optional: Hetzner Storage Box account name (if set, no need to set SFTP_HOST and SFTP_USER)                                                   | 
+| `SFTP_HOST`      | -           | Optional SFTP server hostname                                                                                                                 |
+| `SFTP_USER`      | -           |                                                                                                                                               |
+| `SFTP_PATH`      | `backup`    | Remote path on the SFTP server where to put backup files                                                                                      |
+| `SSHPASS`        | -           | SFTP account password                                                                                                                         |
+| `PG_COMPRESS`    | `zstd`      | Compression program for PostgreSQL dump, available: `zstd`, `pigz` (parallel gzip), `pbzip2` (parallel bzip2), `xz`                           |
+| `TAR_COMPRESS`   | `zstd`      | Compression program for TAR-ed directory                                                                                                      |
+| `ZSTD_CLEVEL`    | `3`         | Zstd compression level (1-19)                                                                                                                 |
+| `ZSTD_NBTHREADS` | `0`         | Number of CPU cores for Zstd compression, default 0 means all cores                                                                           |
+| `XZ_DEFAULTS`    | `-T 0`      | Options voor `xz` compression: use all cores by default                                                                                       | 
+| `ENCRYPT`        | `false`     | Option for encryption with default is `false`. If enabled, the `PUBLIC_KEY` variable must be provided.                                        | 
+| `PUBLIC_KEY`     | -           | GPG public key (single line, without header and footer). See above.                                                                           | 
 
 The default `zstd` compression is the fastest and most efficient, and makes sure the backup job is not bottlenecked by 
 the compression as is the case with other compression tools (even the parallel versions).
-
-**Exporting a GPG for use in an environment file.**
-=====================================================
-
-You can use the below command to export the fingerprint of a specific GPG key, and remove unnecessary information.
-
-```gpg --armor --export [key-name] | tail -n +3 | head -n -1 | tr -d "[:space:]"```
-
-### Step-by-Step Explanation:
-
-1. `gpg --armor --export [key-name]:` 
-  * This part of the command exports the specified GPG key in armored format (ASCII text).
-  * Replace `[key-name]` with the actual name of the GPG key you want to export.
-
-2. `| tail -n +3`: 
-  * The `tail` command is used to trim the output, keeping only the last three lines.
-  * The `+3` specifies that we want to start from the third line (inclusive).
-
-3. `| head -n -1`: 
-  * The `head` command is used to further trim the output, keeping only the last one line.
-  * The `-1` specifies that you want to keep all lines except for the first one.
-
-4. `| tr -d "[:space:]"`: 
-  * The `tr` command is used to remove all whitespace characters (spaces) from the output.
-  * This formatting step makes the fingerprint easier to read.
-
-### Resulting output
-
-The resulting output will be a human-readable single line of the GPG key fingerprint, with only the necessary information and without unnecessary whitespace, for instance:
-```
-8D22E0539A6E4C1A3F7D93B9B3C5AGAWKGL42309EK7E5F4E4C3B2
-```
-
-You can use this command to export and format the fingerprint of any GPG key in your keyring. Simply replace `[key-name]` with the actual name of the key you want to work with. And use the output as the value for the `PUBLIC_KEY` option of the docker-backup container. 
-
- 
 
 ## Backing up directories or volumes
 
