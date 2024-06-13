@@ -1,5 +1,6 @@
 # Add this to your Docker Compose configuration, or merge it by referencing this file in the COMPOSE_FILE environment
 # variable in an env-file.
+# Encryption requires a mandatory public key which can be added to the environment file. See Readme.md for more details
 
 volumes:
   backup:
@@ -31,3 +32,4 @@ services:
       - "ZSTD_NBTHREADS"
       - "XZ_DEFAULTS"
       - "ENCRYPT"
+      - "PUBLIC_KEY"

@@ -30,7 +30,6 @@ WORKDIR /home/backup
 COPY *.sh .
 RUN chmod +x *.sh
 COPY include include
-COPY keyfile/public-key.asc include
 
 COPY --from=ofelia /usr/bin/ofelia /usr/bin/ofelia
 COPY ofelia.ini.tmpl .

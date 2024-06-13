@@ -5,7 +5,17 @@ encrypt_files() {
     if [[ $ENCRYPT != "true" ]]; then
         return
     fi
+    mkdir -p /home/backup/include/keyfile
+    touch /home/backup/include/keyfile/public-key.asc
+
+    echo "-----BEGIN PGP PUBLIC KEY BLOCK-----" > /home/backup/include/keyfile/public-key.asc
+    echo "                                    " >> /home/backup/include/keyfile/public-key.asc
+    echo "${PUBLIC_KEY}" >> /home/backup/include/keyfile/public-key.asc
+    echo "-----END PGP PUBLIC KEY BLOCK----" >> /home/backup/include/keyfile/public-key.asc
+
+
     encrypt_dir=${DIR_BACKUP}
+
     success=true  # assume success initially
 
     start_time=$(date +"%s")   # record the current time in seconds since epoch
@@ -25,6 +35,6 @@ encrypt_files() {
         elapsed_time=$((end_time - start_time))  # calculate the difference between the two times
         print_msg "Encryption succeeded and took ${elapsed_time} seconds"
     else
-        print_error "Encryption failed."
+        print_error "Encryption failed causing back-up failure."
     fi
 }

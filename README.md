@@ -116,33 +116,36 @@ the container.
 The backups can be encrypted with [GPG](https://www.gnupg.org/). To use this feature, you need to provide a GPG key 
 The GPG keys are used to encrypt and decrypt the backup files. You need to provide a "Public key file in .asc format" and place it in the keyfile folder. Make sure you name the file `public-key.asc`. Also make sure you rebuild the image with the new key. The private key is not supposed to be used with this container! You need the private key to decrypt the backups. __make sure you keep the private key in a safe place. If you loose the private key that accompanies the public key, you will not be able to decrypt the backups!__ 
 
+> Due to the fact that the encryption requires the public key, it is mandatory to use the key when encryption is enabled. If no key is provided and encryption is enabled the back-up will fail.
+
 ## Configuration
 
 This container is configured using the following environment variables:
 
-| Variable         | Default     | Description                                                                                                                                   |
-|------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `ONESHOT`        | `false`     | Set to `true` to backup up a single time and exit without starting the scheduler                                                              |
-| `SCHEDULE`       | `@midnight` | Schedule for the backup job, see [here](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc#hdr-CRON_Expression_Format) for the format |
-| `LOGGING`        | `true`      | Whether Ofelia should write logs for each job in the container to `/backup/ofelia`                                                            |
-| `BACKUP_DIR`     | -           | Directory to back up (optional)                                                                                                               |
-| `BACKUP_PG`      | `true`      | Set to `false` to only backup directories and no PostgreSQL databases                                                                         |
-| `PGHOST`         | `db`        | PostgreSQL database hostname. When using Docker Compose specify the service name.                                                             |
-| `PGPORT`         | `5432`      | PostgreSQL port                                                                                                                               |
-| `PGUSER`         | `postgres`  | PostgreSQL username                                                                                                                           |
-| `PGPASSWORD`     | `postgres`  | PostgreSQL password                                                                                                                           |
-| `PGDATABASE`     | `all`       | Database(s) to back up, separated by `,` or `all` to back up all databases in separate SQL dumps                                              |
-| `STORAGE_BOX`    | -           | Optional: Hetzner Storage Box account name (if set, no need to set SFTP_HOST and SFTP_USER)                                                   | 
-| `SFTP_HOST`      | -           | Optional SFTP server hostname                                                                                                                 |
-| `SFTP_USER`      | -           |                                                                                                                                               |
-| `SFTP_PATH`      | `backup`    | Remote path on the SFTP server where to put backup files                                                                                      |
-| `SSHPASS`        | -           | SFTP account password                                                                                                                         |
-| `PG_COMPRESS`    | `zstd`      | Compression program for PostgreSQL dump, available: `zstd`, `pigz` (parallel gzip), `pbzip2` (parallel bzip2), `xz`                           |
-| `TAR_COMPRESS`   | `zstd`      | Compression program for TAR-ed directory                                                                                                      |
-| `ZSTD_CLEVEL`    | `3`         | Zstd compression level (1-19)                                                                                                                 |
-| `ZSTD_NBTHREADS` | `0`         | Number of CPU cores for Zstd compression, default 0 means all cores                                                                           |
-| `XZ_DEFAULTS`    | `-T 0`      | Options voor `xz` compression: use all cores by default                                                                                       | 
-| `ENCRYPT    `    | `true`      | Option for encryption with gpg. copy your own public key in the folder keyfile or paste it in the template and rebuild the image: default is `true`                                                                                       | 
+| Variable         | Default     | Description                                                                                                                                                          |
+|------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ONESHOT`        | `false`     | Set to `true` to backup up a single time and exit without starting the scheduler                                                                                     |
+| `SCHEDULE`       | `@midnight` | Schedule for the backup job, see [here](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc#hdr-CRON_Expression_Format) for the format                        |
+| `LOGGING`        | `true`      | Whether Ofelia should write logs for each job in the container to `/backup/ofelia`                                                                                   |
+| `BACKUP_DIR`     | -           | Directory to back up (optional)                                                                                                                                      |
+| `BACKUP_PG`      | `true`      | Set to `false` to only backup directories and no PostgreSQL databases                                                                                                |
+| `PGHOST`         | `db`        | PostgreSQL database hostname. When using Docker Compose specify the service name.                                                                                    |
+| `PGPORT`         | `5432`      | PostgreSQL port                                                                                                                                                      |
+| `PGUSER`         | `postgres`  | PostgreSQL username                                                                                                                                                  |
+| `PGPASSWORD`     | `postgres`  | PostgreSQL password                                                                                                                                                  |
+| `PGDATABASE`     | `all`       | Database(s) to back up, separated by `,` or `all` to back up all databases in separate SQL dumps                                                                     |
+| `STORAGE_BOX`    | -           | Optional: Hetzner Storage Box account name (if set, no need to set SFTP_HOST and SFTP_USER)                                                                          | 
+| `SFTP_HOST`      | -           | Optional SFTP server hostname                                                                                                                                        |
+| `SFTP_USER`      | -           |                                                                                                                                                                      |
+| `SFTP_PATH`      | `backup`    | Remote path on the SFTP server where to put backup files                                                                                                             |
+| `SSHPASS`        | -           | SFTP account password                                                                                                                                                |
+| `PG_COMPRESS`    | `zstd`      | Compression program for PostgreSQL dump, available: `zstd`, `pigz` (parallel gzip), `pbzip2` (parallel bzip2), `xz`                                                  |
+| `TAR_COMPRESS`   | `zstd`      | Compression program for TAR-ed directory                                                                                                                             |
+| `ZSTD_CLEVEL`    | `3`         | Zstd compression level (1-19)                                                                                                                                        |
+| `ZSTD_NBTHREADS` | `0`         | Number of CPU cores for Zstd compression, default 0 means all cores                                                                                                  |
+| `XZ_DEFAULTS`    | `-T 0`      | Options voor `xz` compression: use all cores by default                                                                                                              | 
+| `ENCRYPT`        | `false`      | Option for encryption with default is `false` if enabled the _mandatory_ `PUBLIC_KEY` variable must be populated in the compose file. You can paste your __public__ key in there. | 
+| `PUBLIC_KEY`     | -           | This variable can be set in both the compose file or in an .env file (recommended). It requires that you paste the contents of a public key file (.asc) as a __single line__ without the `--- BEGIN BLOCK ---` and `---END PGP BLOCK ---` __This is mandatory if encryption is enabled__. Without a working public key the encryption will fail and the backups will not be stored.        | 
 
 The default `zstd` compression is the fastest and most efficient, and makes sure the backup job is not bottlenecked by 
 the compression as is the case with other compression tools (even the parallel versions).
