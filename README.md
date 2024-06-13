@@ -114,8 +114,7 @@ the container.
 
 ## Encryption
 The backups can be encrypted with [GPG](https://www.gnupg.org/). To use this feature, you need to provide a GPG key 
-The GPG keys are used to encrypt and decrypt the backup files. You need to provide a "Public key file in .asc format" and place it in the keyfile folder. Make sure you name the file `public-key.asc`. Also make sure you rebuild the image with the new key. The private key is not supposed to be used with this container! You need the private key to decrypt the backups. __make sure you keep the private key in a safe place. If you loose the private key that accompanies the public key, you will not be able to decrypt the backups!__ 
-
+The GPG keys are used to encrypt and decrypt the backup files. 
 > Due to the fact that the encryption requires the public key, it is mandatory to use the key when encryption is enabled. If no key is provided and encryption is enabled the back-up will fail.
 
 ## Configuration
@@ -149,6 +148,42 @@ This container is configured using the following environment variables:
 
 The default `zstd` compression is the fastest and most efficient, and makes sure the backup job is not bottlenecked by 
 the compression as is the case with other compression tools (even the parallel versions).
+
+**Exporting a GPG for use in an environment file.**
+=====================================================
+
+You can use the below command to export the fingerprint of a specific GPG key, and remove unnecessary information.
+
+```gpg --armor --export [key-name] | tail -n +3 | head -n -1 | tr -d "[:space:]"```
+
+### Step-by-Step Explanation:
+
+1. `gpg --armor --export [key-name]:` 
+  * This part of the command exports the specified GPG key in armored format (ASCII text).
+  * Replace `[key-name]` with the actual name of the GPG key you want to export.
+
+2. `| tail -n +3`: 
+  * The `tail` command is used to trim the output, keeping only the last three lines.
+  * The `+3` specifies that we want to start from the third line (inclusive).
+
+3. `| head -n -1`: 
+  * The `head` command is used to further trim the output, keeping only the last one line.
+  * The `-1` specifies that you want to keep all lines except for the first one.
+
+4. `| tr -d "[:space:]"`: 
+  * The `tr` command is used to remove all whitespace characters (spaces) from the output.
+  * This formatting step makes the fingerprint easier to read.
+
+### Resulting output
+
+The resulting output will be a human-readable single line of the GPG key fingerprint, with only the necessary information and without unnecessary whitespace, for instance:
+```
+8D22E0539A6E4C1A3F7D93B9B3C5AGAWKGL42309EK7E5F4E4C3B2
+```
+
+You can use this command to export and format the fingerprint of any GPG key in your keyring. Simply replace `[key-name]` with the actual name of the key you want to work with. And use the output as the value for the `PUBLIC_KEY` option of the docker-backup container. 
+
+ 
 
 ## Backing up directories or volumes
 

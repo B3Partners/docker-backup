@@ -8,10 +8,10 @@ encrypt_files() {
     mkdir -p /home/backup/include/keyfile
     touch /home/backup/include/keyfile/public-key.asc
 
-    echo "-----BEGIN PGP PUBLIC KEY BLOCK-----" > /home/backup/include/keyfile/public-key.asc
-    echo "                                    " >> /home/backup/include/keyfile/public-key.asc
-    echo "${PUBLIC_KEY}" >> /home/backup/include/keyfile/public-key.asc
-    echo "-----END PGP PUBLIC KEY BLOCK----" >> /home/backup/include/keyfile/public-key.asc
+    echo "-----BEGIN PGP PUBLIC KEY BLOCK-----" > $KEYFILE
+    echo "                                    " >> $KEYFILE
+    echo "${PUBLIC_KEY}" >> $KEYFILE
+    echo "-----END PGP PUBLIC KEY BLOCK----" >> $KEYFILE
 
 
     encrypt_dir=${DIR_BACKUP}
@@ -34,6 +34,7 @@ encrypt_files() {
     if $success; then
         elapsed_time=$((end_time - start_time))  # calculate the difference between the two times
         print_msg "Encryption succeeded and took ${elapsed_time} seconds"
+        find $DIR_UPLOADED/ -type f ! -name "*gpg" -exec rm {} \; # Remove all files except those with .gpg extension from uploaded directory.
     else
         print_error "Encryption failed causing back-up failure."
     fi

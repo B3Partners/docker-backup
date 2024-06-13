@@ -24,6 +24,5 @@ upload_backup() {
     sshpass -e scp -p $DIR_BACKUP/* $SFTP && mv $DIR_BACKUP/* $DIR_UPLOADED/ || print_error "[ERR] Error copying to SFTP server"
   else
     sshpass -e scp -p $DIR_BACKUP/*.gpg $SFTP && mv $DIR_BACKUP/* $DIR_UPLOADED/ || print_error "[ERR] Error copying to SFTP server"
-    find $DIR_UPLOADED/ -type f ! -name "*gpg" -exec rm {} \; # Remove all files except those with .gpg extension from uploaded directory.
   fi
 }
