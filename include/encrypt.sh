@@ -5,8 +5,8 @@ encrypt_files() {
     if [[ $ENCRYPT != "true" ]]; then
         return
     fi
-    mkdir -p /home/backup/include/keyfile
-    touch /home/backup/include/keyfile/public-key.asc
+    mkdir -p $(dirname $KEYFILE)
+    touch $KEYFILE
 
     echo "-----BEGIN PGP PUBLIC KEY BLOCK-----" > $KEYFILE
     echo "                                    " >> $KEYFILE
