@@ -160,7 +160,7 @@ The default `zstd` compression is the fastest and most efficient, and makes sure
 the compression as is the case with other compression tools (even the parallel versions).
 
 ## File hashes
-File hashes are created to check the integity of the backup files. These are written to a file in the same directory as the backup files with the extension `.sha256`. You can compare the hashes of the backup files with the hashes in this file to check if the backup files integrity is intact. When you download the backup files and the checksum file and the files are in the same directory as the checksums file, you can use the following command to check the hashes:
+File hashes are created to check the integrity of the backup files. These are written to a file in the same directory as the backup files with the extension `.sha256`. You can compare the hashes of the backup files with the hashes in this file to check if the backup files integrity is intact. When you download the backup files and the checksum file and the files are in the same directory as the checksums file, you can use the following command to check the hashes:
 
 ```shell
 sha256sum -c checksums.sha256
