@@ -34,8 +34,9 @@ encrypt_files() {
     if $success; then
         elapsed_time=$((end_time - start_time))  # calculate the difference between the two times
         print_msg "Encryption succeeded and took ${elapsed_time} seconds"
-        find $DIR_UPLOADED/ -type f ! -name "*gpg" -exec rm {} \; # Remove all files except those with .gpg extension from uploaded directory.
-    else
+        find $DIR_BACKUP/ -type f ! \( -name "*.gpg" -o -name "*.keep" -o -name "*.sha256" \) -exec rm {} \;
+        else
         print_error "Encryption failed causing back-up failure."
     fi
+
 }

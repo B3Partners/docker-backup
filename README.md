@@ -159,6 +159,22 @@ This container is configured using the following environment variables:
 The default `zstd` compression is the fastest and most efficient, and makes sure the backup job is not bottlenecked by 
 the compression as is the case with other compression tools (even the parallel versions).
 
+## File hashes
+File hashes are created to check the integity of the backup files. These are written to a file in the same directory as the backup files with the extension `.sha256`. You can compare the hashes of the backup files with the hashes in this file to check if the backup files integrity is intact. When you download the backup files and the checksum file and the files are in the same directory as the checksums file, you can use the following command to check the hashes:
+
+```shell
+sha256sum -c checksums.sha256
+```
+if the files are ok, you will see the following output:
+```shell
+backup_file1.gpg: OK
+backup_file2.gpg: OK
+```
+Windows users can use the following command to check the hash of a file:
+
+```powershell
+Get-FileHash -Algorithm SHA256 -Path path_to_your_file
+```
 ## Backing up directories or volumes
 
 Mount directories and volumes under a single path in the container to back them up in a single large tarball. For 
@@ -185,7 +201,7 @@ services:
 # Todos
 
 - [x] Add option to asymmetrically encrypt the backup (using gpg for example)
-- [ ] Include file hashes in output
+- [x] Include file hashes in output
 - [ ] Push backup metrics to Prometheus (which databases, success/fail, full and compressed size, duration, upload 
       stats) for alerts and dashboard in Grafana or similar
 - [ ] Don't start new job when old one still running (only problem with short schedule or if job hangs)
