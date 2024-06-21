@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ARG DOCKERIZE_VERSION=v0.7.0
 ARG POSTGRES_CLIENT_VERSION=15
 
-LABEL authors="matthijsln"
+LABEL authors="matthijsln & o.porsius"
 LABEL org.opencontainers.image.source=https://github.com/B3Partners/docker-backup
 LABEL org.opencontainers.image.description="Docker image to backup PostgreSQL databases and directories"
 LABEL org.opencontainers.image.licenses=MIT
@@ -23,7 +23,7 @@ RUN apt-get update && \
     apt-get update
 
 RUN apt-get install -y -q --no-install-recommends bash postgresql-client-${POSTGRES_CLIENT_VERSION} && \
-    apt-get autoremove -yqq --purge wget ca-certificates gnupg2 && \
+    apt-get autoremove -yqq --purge wget ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/backup

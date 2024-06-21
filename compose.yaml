@@ -30,3 +30,5 @@ services:
       - "TAR_COMPRESS"
       - "ZSTD_NBTHREADS"
       - "XZ_DEFAULTS"
+      - "ENCRYPT"
+      - "PUBLIC_KEY"
