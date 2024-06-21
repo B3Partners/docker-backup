@@ -11,11 +11,11 @@ print_msg() {
 }
 
 print_error() {
-  print_msg ERROR $1
+  print_msg ERROR "$1"
   EXITCODE=1
 }
 
 print_error_and_exit() {
-  print_error $1
+  print_error "$1"
   exit 1
 }
