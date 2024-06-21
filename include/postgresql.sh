@@ -3,16 +3,16 @@
 # Check if versions are different and install matching client if so
 install_matching_postgresql_client() {
   if [[ -n "$POSTGRES_SERVER_VERSION" && "$POSTGRES_SERVER_VERSION" -ne "$POSTGRES_CLIENT_VERSION" ]]; then
-      print_msg "Removing the default PostgreSQL client version $POSTGRES_CLIENT_VERSION provided by Debian $(lsb_release -cs)"
+    print_msg "Removing the default PostgreSQL client version $POSTGRES_CLIENT_VERSION provided by Debian $(lsb_release -cs)"
 
-      apt-get -qq update || print_error_and_exit "Failed to update package list"
-      apt-get -qq remove -y postgresql-client* || print_error_and_exit "Failed to remove existing PostgreSQL client"
+    apt-get -qq update || print_error_and_exit "Failed to update package list"
+    apt-get -qq remove -y postgresql-client* || print_error_and_exit "Failed to remove existing PostgreSQL client"
 
-      print_msg "Installing the client for remote PostgreSQL server version $POSTGRES_SERVER_VERSION"
+    print_msg "Installing the client for remote PostgreSQL server version $POSTGRES_SERVER_VERSION"
 
-      apt-get -qq install -y "postgresql-client-$POSTGRES_SERVER_VERSION" || print_error_and_exit "Failed to install PostgreSQL client $POSTGRES_SERVER_VERSION"
+    apt-get -qq install -y "postgresql-client-$POSTGRES_SERVER_VERSION" || print_error_and_exit "Failed to install PostgreSQL client $POSTGRES_SERVER_VERSION"
 
-      print_msg "PostgreSQL client installation completed successfully"
+    print_msg "PostgreSQL client installation completed successfully"
   fi
 }
 
@@ -33,7 +33,7 @@ backup_postgres_databases() {
   # Extract PostgreSQL server version from the remote server
   POSTGRES_SERVER_VERSION=$(psql -tA -d postgres -c "select current_setting('server_version_num')::integer / 10000;")
   if [[ $? -ne 0 ]]; then
-      print_error_and_exit "Error testing the PostgreSQL connection; please check the PG* environment variables."
+    print_error_and_exit "Error testing the PostgreSQL connection; please check the PG* environment variables."
   fi
 
   [[ $STARTUP ]] && print_msg "PostgreSQL backup configured, current client: $POSTGRES_CLIENT_VERSION, server version: $POSTGRES_SERVER_VERSION"
@@ -41,7 +41,7 @@ backup_postgres_databases() {
   install_matching_postgresql_client
 
   if [[ $STARTUP ]]; then
-      return
+    return
   fi
 
   # Do not leave dumps from deleted databases (locally, will still remain at SFTP server)
