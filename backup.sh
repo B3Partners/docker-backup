@@ -37,10 +37,12 @@ mkdir $DIR_UPLOADED 2>/dev/null
 echo
 EXITCODE=0
 
+rm $DIR_BACKUP/checksums.sha256 2>/dev/null
+
 backup_directory
 backup_postgres_databases
 encrypt_files
-
+create_checksums
 
 if [[ ! $STARTUP ]]; then
   upload_backup
