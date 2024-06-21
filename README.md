@@ -114,10 +114,10 @@ the container.
 
 ## Encryption
 
-The backups can be encrypted with [GPG](https://www.gnupg.org/). To enable, set `ENCRYPT=true` and provide the a public
+The backups can be encrypted with [GPG](https://www.gnupg.org/). To enable, set `ENCRYPT=true` and provide a public
 key in the `PUBLIC_KEY` variable, on a single line without header and footer to make it easier to specify. 
 
-Use the following command to export a GPG key in a single line: 
+Use the following command to export a GPG key the required format: 
 
 ```shell
 gpg --armor --export [key-name] | tail -n +3 | head -n -1 | tr -d "[:space:]"
@@ -160,7 +160,11 @@ The default `zstd` compression is the fastest and most efficient, and makes sure
 the compression as is the case with other compression tools (even the parallel versions).
 
 ## File hashes
-File hashes are created to check the integrity of the backup files. These are written to a file in the same directory as the backup files with the extension `.sha256`. You can compare the hashes of the backup files with the hashes in this file to check if the backup files integrity is intact. When you download the backup files and the checksum file and the files are in the same directory as the checksums file, you can use the following command to check the hashes:
+
+File hashes are created to check the integrity of the backup files. These are written to a file in the same directory as
+the backup files with the extension `.sha256`. You can compare the hashes of the backup files with the hashes in this
+file to check if the backup files integrity is intact. When you download the backup files and the checksum file and the
+files are in the same directory as the checksums file, you can use the following command to check the hashes:
 
 ```shell
 sha256sum -c checksums.sha256
@@ -200,8 +204,6 @@ services:
 
 # Todos
 
-- [x] Add option to asymmetrically encrypt the backup (using gpg for example)
-- [x] Include file hashes in output
 - [ ] Push backup metrics to Prometheus (which databases, success/fail, full and compressed size, duration, upload 
       stats) for alerts and dashboard in Grafana or similar
 - [ ] Don't start new job when old one still running (only problem with short schedule or if job hangs)
