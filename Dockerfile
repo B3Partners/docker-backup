@@ -1,7 +1,7 @@
-FROM mcuadros/ofelia:v3.0.8 as ofelia
+FROM mcuadros/ofelia:v3.0.8 AS ofelia
 
 FROM debian:bookworm-slim
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ARG DOCKERIZE_VERSION=v0.7.0
 ARG POSTGRES_CLIENT_VERSION=15
 
