@@ -1,4 +1,4 @@
-name: 'Build and Publish image'
+name: 'Build and Publish'
 
 concurrency:
   group: ${{ github.workflow }}-${{ ( github.ref == 'refs/heads/main' ) && format('ci-main-{0}', github.sha) || format('ci-main-{0}', github.ref) }}
@@ -7,10 +7,12 @@ concurrency:
 on:
   workflow_dispatch:
   push:
+    branches:
+      - 'main'
 
 jobs:
   build_and_publish:
-    name: 'Build and Publish image'
+    name: 'Build and push image'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
