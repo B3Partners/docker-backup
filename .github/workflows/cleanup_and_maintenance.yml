@@ -1,0 +1,36 @@
+name: 'Cleanup and Maintenance'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "19 23 * * 1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ ( github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release' ) && format('ci-main-{0}', github.sha) || format('ci-main-{0}', github.ref) }}
+  cancel-in-progress: true
+
+jobs:
+  workflows:
+    runs-on: ubuntu-latest
+    name: 'Cleanup old workflow runs'
+    permissions:
+      actions: write
+      contents: read
+      packages: write
+    steps:
+      - name: 'Delete workflow runs'
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 90
+          keep_minimum_runs: 2
+      - name: 'Pruning Untagged Images Older than 5 days'
+        uses: dataaxiom/ghcr-cleanup-action@v1.0.13
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-untagged: true
+          delete-ghost-images: true
+          delete-partial-images: true
+          older-than: 5
+          log-level: debug
