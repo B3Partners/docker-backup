@@ -1,8 +1,7 @@
-FROM mcuadros/ofelia:0.3.19 AS ofelia
-
 FROM debian:bookworm-slim
-ENV DEBIAN_FRONTEND=noninteractive
-ARG DOCKERIZE_VERSION=v0.8.0
+
+ARG DOCKERIZE_VERSION=0.9.6
+ARG OFELIA_VERSION=0.3.19
 ARG POSTGRES_CLIENT_VERSION=15
 
 LABEL org.opencontainers.image.authors="support@b3partners.nl" \
@@ -14,14 +13,13 @@ LABEL org.opencontainers.image.authors="support@b3partners.nl" \
 
 ENV TZ="Europe/Amsterdam"
 
-# musl required for Ofelia when copying from Docker image, alternative is to download binary release from GitHub like
-# dockerize but recent versions are not available
-
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-    apt-get install -y -q --no-install-recommends bash wget ca-certificates gnupg2 lsb-release musl openssh-client sshpass pv zstd pigz bzip2 pbzip2 xz-utils && \
+    apt-get install -y -q --no-install-recommends bash wget ca-certificates gnupg2 lsb-release openssh-client sshpass pv zstd pigz bzip2 pbzip2 xz-utils && \
     echo "deb [signed-by=/usr/share/keyrings/apt.postgresql.org.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor --yes -o /usr/share/keyrings/apt.postgresql.org.gpg && \
-    wget -qO - https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz | tar xzf - -C /usr/local/bin && \
+    wget -qO- https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz | tar xzf - -C /usr/local/bin && \
+    wget -qO- https://github.com/mcuadros/ofelia/releases/download/v$OFELIA_VERSION/ofelia_${OFELIA_VERSION}_linux_amd64.tar.gz | tar xzf - -C /usr/bin ofelia && \
     apt-get install -y -q --no-install-recommends bash postgresql-client-${POSTGRES_CLIENT_VERSION} && \
     apt-get update && apt-get upgrade -y && apt-get autoremove -yqq --purge wget ca-certificates && \
     rm -rf /var/lib/apt/lists/*
@@ -31,7 +29,6 @@ COPY *.sh .
 RUN chmod +x *.sh
 COPY include include
 
-COPY --from=ofelia /usr/bin/ofelia /usr/bin/ofelia
 COPY ofelia.ini.tmpl .
 
 RUN mkdir -p /etc/ofelia /backup/temp /backup/ofelia /backup/uploaded 
