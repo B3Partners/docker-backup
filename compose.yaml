@@ -16,6 +16,7 @@ services:
       - "LOGGING"
       - "BACKUP_PG"
       - "BACKUP_DIR"
+      - "CLEAR_UPLOADED"
       - "PGHOST=${PGHOST:-db}"
       - "PGPORT"
       - "PGDATABASE"

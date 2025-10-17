@@ -6,7 +6,7 @@ This container can back up a PostgreSQL server.
 
 - The PostgreSQL server can be running locally or in Docker
 - The backup is compressed very quickly using all CPU cores with zstd
-- Optionally the backup can be copied off-site using SFTP (for example a Hetzner Storage Box).
+- Optionally, the backup can be copied off-site using SFTP (for example, a Hetzner Storage Box).
 - Can be configured to back up all databases (including user accounts) or a single database
 - The backup is a SQL dump made using `pg_dump`
 - The container uses a Debian base image and uses `pg_dump` with the same major version as the server by installing the
@@ -93,7 +93,8 @@ keeping older backups. Or extend this image with support for borgbackup, restic,
 
 The backup can be copied to a remote SFTP server. This is done after all backups are made. Backups are kept locally 
 after copying in `/backup/uploaded`, so you need enough disk space to keep the previous backup and for creating a new 
-one in `/backup/temp`.
+one in `/backup/temp`, except when using the `CLEAR_UPLOADED=true` option -- then the uploaded backup is removed
+before creating a new one (but if uploading is broken, you won't have a backup to restore from locally).
 
 If you back up to a Hetzner Storage Box for example, you can enable scheduled ZFS snapshots to automatically make 
 read-only copies of your backup files. This means you don't need to run a backup server to have read-only backups. Some 
@@ -137,6 +138,7 @@ This container is configured using the following environment variables:
 | `SCHEDULE`       | `@midnight` | Schedule for the backup job, see [here](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc#hdr-CRON_Expression_Format) for the format |
 | `LOGGING`        | `true`      | Whether Ofelia should write logs for each job in the container to `/backup/ofelia`                                                            |
 | `BACKUP_DIR`     | -           | Directory to back up (optional)                                                                                                               |
+| `CLEAR_UPLOADED` | `false`     | Set to `true` to remove the uploaded backup before creating a new one, reducing disk space requirements                                       |                                                                                                                                               |
 | `BACKUP_PG`      | `true`      | Set to `false` to only backup directories and no PostgreSQL databases                                                                         |
 | `PGHOST`         | `db`        | PostgreSQL database hostname. When using Docker Compose specify the service name.                                                             |
 | `PGPORT`         | `5432`      | PostgreSQL port                                                                                                                               |
@@ -182,7 +184,7 @@ Get-FileHash -Algorithm SHA256 -Path path_to_your_file
 ## Backing up directories or volumes
 
 Mount directories and volumes under a single path in the container to back them up in a single large tarball. For 
-example using Docker Compose:
+example, using Docker Compose:
 
 ```yaml
 services:
@@ -206,9 +208,9 @@ services:
 
 - [ ] Push backup metrics to Prometheus (which databases, success/fail, full and compressed size, duration, upload 
       stats) for alerts and dashboard in Grafana or similar
-- [ ] Don't start new job when old one still running (only problem with short schedule or if job hangs)
+- [ ] Don't start a new job when the old one is still running (only a problem with a short schedule or if the job hangs)
 
 # Won't fix
 
-- Run as non-root user. The script uses `apt` to install the correct PostgreSQL client, and may need permissions to read
-  mounted directories to back up.
+- Run as a non-root user. The script uses `apt` to install the correct PostgreSQL client, and may need permissions to
+  read mounted directories to back up.

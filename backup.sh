@@ -39,6 +39,11 @@ EXITCODE=0
 
 rm $DIR_BACKUP/checksums.sha256 2>/dev/null
 
+if [[ $CLEAR_UPLOADED == "true" && ! $STARTUP ]]; then
+  print_msg "Clearing previously uploaded files"
+  rm $DIR_UPLOADED/* 2>/dev/null
+fi
+
 backup_directory
 backup_postgres_databases
 encrypt_files
