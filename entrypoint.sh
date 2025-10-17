@@ -12,6 +12,9 @@ else
     ./backup.sh --startup
     # Create Ofelia config from template
     export LOGGING=${LOGGING:-true}
+    if [ "$LOGGING" == "true" ]; then
+        mkdir -p /backup/ofelia
+    fi
     export SCHEDULE=${SCHEDULE:-"@midnight"}
     dockerize -template ofelia.ini.tmpl:/etc/ofelia/ofelia.ini
     # Execute standard CMD from Dockerfile
