@@ -1,4 +1,4 @@
-FROM mcuadros/ofelia:v3.0.8 AS ofelia
+FROM mcuadros/ofelia:0.3.19 AS ofelia
 
 FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive
