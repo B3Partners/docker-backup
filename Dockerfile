@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG DOCKERIZE_VERSION=0.9.9
 ARG OFELIA_VERSION=0.3.20
