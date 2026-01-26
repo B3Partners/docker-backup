@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 ARG DOCKERIZE_VERSION=0.9.6
-ARG OFELIA_VERSION=0.3.19
+ARG OFELIA_VERSION=0.3.20
 ARG POSTGRES_CLIENT_VERSION=15
 
 LABEL org.opencontainers.image.authors="support@b3partners.nl" \
