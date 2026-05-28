@@ -20,7 +20,7 @@ RUN apt-get update && \
     wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor --yes -o /usr/share/keyrings/apt.postgresql.org.gpg && \
     wget -qO- https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz | tar xzf - -C /usr/local/bin && \
     wget -qO- https://github.com/mcuadros/ofelia/releases/download/v$OFELIA_VERSION/ofelia_${OFELIA_VERSION}_linux_amd64.tar.gz | tar xzf - -C /usr/bin ofelia && \
-    apt-get install -y -q --no-install-recommends bash postgresql-client-${POSTGRES_CLIENT_VERSION} && \
+    apt-get update && apt-get install -y -q --no-install-recommends bash postgresql-client-${POSTGRES_CLIENT_VERSION} && \
     apt-get update && apt-get upgrade -y && apt-get autoremove -yqq --purge wget ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
