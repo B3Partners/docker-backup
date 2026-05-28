@@ -1,7 +1,7 @@
 FROM debian:trixie-slim
 
 ARG DOCKERIZE_VERSION=0.9.9
-ARG OFELIA_VERSION=0.3.20
+ARG OFELIA_VERSION=0.3.22
 ARG POSTGRES_CLIENT_VERSION=17
 
 LABEL org.opencontainers.image.authors="support@b3partners.nl" \
