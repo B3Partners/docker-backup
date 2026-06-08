@@ -30,7 +30,7 @@ jobs:
           keep_minimum_runs: 2
 
       - name: 'Pruning Untagged Images Older than 1 week'
-        uses: dataaxiom/ghcr-cleanup-action@v1.2.1
+        uses: dataaxiom/ghcr-cleanup-action@v1.2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           package: 'backup'
